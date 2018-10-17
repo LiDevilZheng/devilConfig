@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jbit.dao.CategoryDao">
+	<select id="findById" resultType="String">
+		select categoryName from app_category where id=#{id}
+	</select>
+	<select id="getCategoryName1" resultType="Category">
+		SELECT * FROM app_category WHERE parentId IS NULL;
+	</select>
+	<select id="findByparentId" resultType="Category">
+		SELECT * FROM app_category WHERE parentId=#{parentId};
+	</select>
+</mapper>
