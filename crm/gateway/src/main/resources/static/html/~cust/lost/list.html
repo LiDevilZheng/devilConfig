@@ -1,0 +1,115 @@
+<!DOCTYPE HTML >
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../../css/style.css" rel="stylesheet" type="text/css">
+<script src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+		$(function(){
+		    $.ajax({
+				url:"../../../cust/getAllLost",
+				type:"get",
+                contentType:"application/json;charset=utf-8",
+				success:function(obj){
+				    findByParams(obj);
+				}
+			});
+		});
+        function changePage() {
+            var targetPage=$("#targetPage").val();
+            findByPageNo(targetPage);
+        }
+        function findByPageNo(pageNo){
+            var pageSize=$("#size").val();
+            var data="pageNo="+pageNo+"&pageSize="+pageSize+"";
+            var cust_name= $("#cust_name").val();
+            if(cust_name!==""){
+                data+="&cust_name="+cust_name+"";
+            }
+            var manager_name=$("#manager_name").val();
+            if(manager_name!==""){
+                data+="&manager_name="+manager_name+"";
+            }
+            var memo=$("#memo").val();
+            if(memo!==""&&memo!="全部"){
+                data+="&memo="+memo+"";
+            }
+            //alert(data);
+            $.ajax({
+                url:"../../../cust/getAllLost?"+data,
+                type:"get",
+                //contentType:"application/json;charset=utf-8",
+                success:function (obj) {
+                    findByParams(obj);
+                }
+            });
+        }
+		function findByParams(obj){
+		    var str="<table class=\"data_list_table\">" +
+                "<tr><th>编号</th>" +
+                "<th>客户</th>" +
+                "<th>客户经理</th>" +
+                "<th>上次下单时间</th>" +
+                "<th>确认流失时间</th>" +
+                "<th>状态</th>" +
+                "<th>操作</th></tr>";
+		    if(obj.code==0){
+		        $.each(obj.result.list,function(index,i){
+                    str+="<tr><td class=\"list_data_number\">"+i.id+"</td>" +
+                        "<td class=\"list_data_text\">"+i.cust_name+"</td>" +
+                        "<td class=\"list_data_ltext\">"+i.manager_name+"</td>" +
+                        "<td class=\"list_data_text\">"+i.order_date+"</td>" +
+                        "<td class=\"list_data_text\">"+i.lost_date+"</td>" +
+                        "<td class=\"list_data_text\">"+i.memo+"</td>"+
+                        "<td class=\"list_data_op\">" +
+                        "<img onclick=\"toUrl("+i.id+",'confirm.html');\" title=\"确认流失\" src=\"../../images/bt_confirm.gif\" class=\"op_button\" />" +
+                        "<img onclick=\"toUrl("+i.id+",'relay.html');\" title=\"暂缓流失\" src=\"../../images/bt_relay.gif\" class=\"op_button\" />" +
+                        "</td></tr>";
+				});
+				str+="<tr><th colspan=\"7\" class=\"pager\">" +
+                    "<div class=\"pager\">共"+obj.result.count+"条记录 每页<input value='"+obj.result.pageSize+"' size=\"2\" id='size'/>条" +
+                    "第<input  value='"+obj.result.pageNo+"' size=\"2\"/>页/共"+obj.result.pageCount+"页" +
+                    "<a href='javascript:findByPageNo(1);'>第一页</a>" +
+                    "<a href='javascript:findByPageNo("+(obj.result.pageNo-1)+");'>上一页</a>" +
+                    "<a href='javascript:findByPageNo("+(obj.result.pageNo+1)+");'>下一页</a>" +
+                    "<a href='javascript:findByPageNo("+obj.result.pageCount+");'>最后一页</a>" +
+                    "转到<input id='targetPage' value='"+obj.result.pageNo+"' size=\"2\"/>页" +
+                    "<button width=\"20\" onclick='changePage();'>GO</button>" +
+                    "</div></th></tr></table>";
+				$("#info").html(str);
+			}else{
+		        alert("没有客户流失信息！");
+			}
+		}
+	</script>
+</head>
+<body>
+
+<div class="page_title">客户流失管理</div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>
+	<button class="common_button" onclick="findByPageNo(1);">查询</button>
+</div>
+<table class="query_form_table">
+	<tr>
+		<th>客户</th>
+		<td><input id="cust_name"/></td>
+		<th>客户经理</th>
+		<td><input id="manager_name"/></td>
+		<th>状态</th>
+		<td>
+			<select id="memo">
+				<option>全部</option>
+				<option>预警</option>
+				<option>暂缓流失</option>
+				<option>确认流失</option>
+			</select>
+		</td>
+	</tr>
+	</table>
+<br />
+<div id="info"></div>
+</body>
+</html>

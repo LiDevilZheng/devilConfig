@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../../css/style.css" rel="stylesheet" type="text/css">
+<script src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+		$(function(){
+		    $.ajax({
+				url:"../../../cust/getAllCustomer",
+				type:"get",
+				contentType:"application/json;charset=utf-8",
+				success:function(obj){
+				    findByParams(obj);
+				}
+			});
+		});
+		function findByParams(obj){
+		    var str="<table class=\"data_list_table\"><tr><th>序号</th><th>客户编号</th><th>名称</th>" +
+                "<th>地区</th><th>客户经理</th><th>客户等级</th><th>操作</th></tr>";
+		    for(var i=0;i<obj.list.length;i++){
+		        str+="<tr><td class=\"list_data_number\">"+obj.list[i].id+"</td>" +
+                    "<td class=\"list_data_text\">"+obj.list[i].no+"</td>" +
+                    "<td class=\"list_data_ltext\">"+obj.list[i].name+"</td>" +
+                    "<td class=\"list_data_text\">"+obj.list[i].regin+"</td>" +
+                    "<td class=\"list_data_text\">"+obj.list[i].manager_name+"</td>" +
+                    "<td class=\"list_data_text\">"+obj.list[i].level_label+"</td>" +
+                    "<td class=\"list_data_op\">" +
+                    "<img onclick=\"toUrl("+obj.list[i].id+",'edit.html');\" title=\"编辑\" src=\"../../images/bt_edit.gif\" class=\"op_button\" />" +
+                    "<img onclick=\"toLinkMan('"+obj.list[i].no+"','linkman.html','"+obj.list[i].name+"');\" title=\"联系人\" src=\"../../images/bt_linkman.gif\" class=\"op_button\" />" +
+                    "<img onclick=\"toUrl("+obj.list[i].id+",'activities.html');\" title=\"交往记录\" src=\"../../images/bt_acti.gif\" class=\"op_button\" />" +
+                    "<img onclick=\"toUrl("+obj.list[i].id+",'orders.html');\" title=\"历史订单\" src=\"../../images/bt_orders.gif\" class=\"op_button\" />";
+		        if(obj.list[i].status!=3){
+                    str+="<img onclick=\"delLinkMan("+obj.list[i].id+",'"+obj.list[i].name+"');\" title=\"删除\" src=\"../../images/bt_del.gif\" class=\"op_button\" />";
+                }
+		        str+="</td></tr>";
+			}
+			str+="<tr><th colspan=\"100\" class=\"pager\"><div class=\"pager\">\n" +
+                "共"+obj.count+"条记录 每页<input value='"+obj.pageSize+"' size=\"2\" id='size'/>条" +
+                "第<input value='"+obj.pageNo+"' size=\"2\"/>页/共"+obj.pageCount+"页" +
+                "<a href='javascript:findByPageNo(1);'>第一页</a>" +
+                "<a href='javascript:findByPageNo("+(obj.pageNo-1)+")'>上一页</a>" +
+                "<a href='javascript:findByPageNo("+(obj.pageNo+1)+")'>下一页</a>" +
+                "<a href='javascript:findByPageNo("+obj.pageCount+")'>最后一页</a>转到<input value=\"1\" size=\"2\" id='targetPage'/>页" +
+                "<button width=\"20\" onclick='changePage();'>GO</button></div></th></tr></table>";
+            $("#info").html(str);
+		}
+        function findByPageNo(pageNo){
+            var data="pageNo="+pageNo;
+            var pageSize=$("#size").val();
+            if(typeof pageSize!="undefined"){
+                data+="&pageSize="+pageSize+"";
+            }
+            var no= $("#no").val();
+            if(no!=""){
+                data+="&no="+no+"";
+            }
+            var name=$("#name").val();
+            if(name!=""){
+                data+="&name="+name+"";
+            }
+            var regin=$("#regin").val();
+            if(regin!=""&&regin!="全部"){
+                data+="&regin="+regin+"";
+            }
+            var manager_name=$("#manager_name").val();
+            if(manager_name!=""){
+                data+="&manager_name="+manager_name+"";
+			}
+			var level_label=$("#level_label").val();
+            if(level_label!=""&&level_label!="全部"){
+                data+="&level_label="+level_label+"";
+			}
+            $.ajax({
+                url:"../../../cust/getAllCustomer?"+data,
+                type:"get",
+                //contentType:"application/json;charset=utf-8",
+                success:function (obj) {
+                    findByParams(obj);
+                }
+            });
+        }
+        function changePage() {
+            var targetPage=$("#targetPage").val();
+            findByPageNo(targetPage);
+        }
+        function delLinkMan(id,msg){
+		    if(del(msg)){
+		        $.ajax({
+                   url:"../../../cust/updateStatus?id="+id,
+                   type:"put",
+                   success:function(obj){
+                        if(obj.code==0){
+                            alert("删除成功！");
+                            to("list.html");
+                        }else{
+                            alert("删除失败！");
+                        }
+                   }
+                });
+            }
+        }
+	</script>
+</head>
+<body>
+
+<div class="page_title">客户信息管理</div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>
+	<button class="common_button" onclick="findByPageNo(1);">查询</button>
+</div>
+<table class="query_form_table">
+	<tr>
+		<th>客户编号</th>
+		<td><input id="no"/></td>
+		<th>名称</th>
+		<td><input id="name"/></td>
+		<th>地区</th>
+		<td>
+			<select id="regin">
+				<option>全部</option>
+				<option>北京</option>
+				<option>华北</option>
+				<option>中南</option>
+				<option>东北</option>
+				<option>西部</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<th>客户经理</th>
+		<td><input id="manager_name"/></td>
+		<th>客户等级</th>
+		<td>
+			<select id="level_label">
+				<option>全部</option>
+				<option>战略合作伙伴</option>
+				<option>合作伙伴</option>
+				<option>大客户</option>
+				<option>普通客户</option>
+			</select>
+		</td>
+		<th>　</th>
+		<td>　</td>
+	</tr>
+</table>
+<br />
+<div id="info"></div>
+</body>
+</html>

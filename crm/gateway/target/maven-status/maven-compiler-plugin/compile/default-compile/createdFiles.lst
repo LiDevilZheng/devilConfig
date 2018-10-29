@@ -1,0 +1,2 @@
+com\devil\gatewayApp.class
+com\devil\zuul\filter\ApiFilter.class

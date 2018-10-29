@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../../css/style.css" rel="stylesheet" type="text/css">
+<script src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+		$(function(){
+		    var id=localStorage.getItem("id");
+		    $.ajax({
+				url:"../../../cust/getActivityById?id="+id,
+				type:"get",
+				success:function(obj){
+				    //alert(obj.result[0].no);
+				    $("#no").html(obj.result[0].no);
+                    $("#name").html(obj.result[0].name);
+                    localStorage.setItem("activity_no",obj.result[0].no);
+                    localStorage.setItem("activity_name",obj.result[0].name);
+                    var str="<table class=\"data_list_table\">" +
+                        "<tr><th width=\"232\">时间</th>" +
+                        "<th>地点</th>\n" +
+                        "<th>概要</th>\n" +
+                        "<th>详细信息</th>" +
+                        "<th>备注</th>" +
+                        "<th>操作</th></tr>";
+                    if(obj.result.length>0){
+                        $.each(obj.result,function(index,i){
+                            str+="<tr><td class=\"list_data_text\" width=\"230\">"+formatTime(i.date,2)+"</td>" +
+                                "<td class=\"list_data_text\">"+i.place+"</td>" +
+                                "<td class=\"list_data_ltext\">"+i.title+"</td>" +
+                                "<td class=\"list_data_ltext\">"+i.desc+"</td>" +
+                                "<td class=\"list_data_op\">"+i.memo+"</td>" +
+                                "<td class=\"list_data_op\">" +
+                                "<img onclick=\"toActivityUrl("+i.id+",'activities_edit.html');\" title=\"编辑\" src=\"../../images/bt_edit.gif\" class=\"op_button\" />" +
+                                "<img onclick=\"delActivity("+i.id+",'交往记录：签订意向协议');\" title=\"删除\" src=\"../../images/bt_del.gif\" class=\"op_button\" />" +
+                                "</td></tr>";
+                        });
+                        str+="</table>";
+                        $("#info").html(str);
+					}else{
+                        alert("暂无交往记录!");
+					}
+				}
+			});
+		});
+		function delActivity(id,msg){
+		    if(del(msg)){
+				$.ajax({
+					url:"../../../cust/delActivity?id="+id,
+					type:"delete",
+					success:function(obj){
+					    if(obj.code==0){
+					        alert("删除成功!");
+					        to("activities.html");
+						}else{
+					        alert("删除失败!");
+						}
+					}
+				});
+            }
+		}
+	</script>
+</head>
+<body>
+
+<div class="page_title">客户信息管理 &gt; 客户信息 &gt; 交往记录</div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>
+	<button class="common_button" onclick="to('activities_add.html');">新建</button>  
+	<button class="common_button" onclick="back();">返回</button>  
+</div>
+<table class="query_form_table">
+	<tr>
+		<th>客户编号</th>
+		<td id="no">KH071202001</td>
+		<th>客户名称</th>
+		<td id="name">聪海信息科技有限公司</td>
+	</tr>
+	</table>
+<br />
+<div id="info"></div>
+</body>
+</html>

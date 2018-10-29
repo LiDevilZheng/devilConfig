@@ -1,0 +1,10 @@
+com\devil\mapper\StorageMapper.class
+com\devil\mapper\DictMapper.class
+com\devil\BasdApp.class
+com\devil\service\impl\DictServiceImpl.class
+com\devil\controller\StorageController.class
+com\devil\mapper\ProductMapper.class
+com\devil\service\impl\StorageServiceImpl.class
+com\devil\controller\ProductController.class
+com\devil\controller\DictController.class
+com\devil\service\impl\ProductServiceImpl.class

@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../../css/style.css" rel="stylesheet" type="text/css">
+<script src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+        var id=localStorage.getItem("id");
+        $(function(){
+            $.ajax({
+                url:"../../../cust/getOrders?id="+id,
+                type:"get",
+                contentType:"application/json;charset=utf-8",
+                success:function(obj){
+                    $("#no").html(obj.result.list[0].no);
+                    $("#name").html(obj.result.list[0].name);
+                    if(obj.result.list[0].customer!=null){
+                        findByPage(obj);
+                    }else{
+                        alert("暂无订单！");
+                    }
+                }
+            });
+        });
+        function findByPageNo(pageNo){
+            var data="pageNo="+pageNo;
+            var pageSize=$("#size").val();
+            if(typeof pageSize!="undefined"){
+                data+="&pageSize="+pageSize+"";
+            }
+            $.ajax({
+                url:"../../../cust/getOrders?id="+id+data,
+                type:"get",
+                success:function(obj){
+                    if(obj.code==0){
+                        findByPage(obj);
+                    }else{
+                        alert("暂无历史订单！");
+                    }
+                }
+            });
+        }
+        function changePage() {
+            var targetPage=$("#targetPage").val();
+            findByPageNo(targetPage);
+        }
+        function findByPage(obj){
+            var str="<table class=\"data_list_table\"><tr><th>订单编号</th><th>日期</th><th>送货地址</th>" +
+                "<th>状态</th><th>操作</th></tr>";
+            for(var i=0;i<obj.result.list.length;i++){
+                str+="<tr><td class=\"list_data_text\">"+obj.result.list[i].id+"</td><td class=\"list_data_text\">"+formatTime(obj.result.list[i].date,2)+"</td>" +
+                    "<td class=\"list_data_text\">"+obj.result.list[i].addr+"</td><td class=\"list_data_text\">";
+                if(obj.result.list[i].status==1){
+                    str+="新创建";
+                }else if(obj.result.list[i].status==2){
+                    str+="已下单";
+                }else if(obj.result.list[i].status==3){
+                    str+="未回款";
+                }else if(obj.result.list[i].status==4){
+                    str+="未发货";
+                }else if(obj.result.list[i].status==5){
+                    str+="已发货";
+                }else{
+                    str+="已回款";
+                }
+                str+="</td><td class=\"list_data_op\">" +
+                    "<img onclick=\"toOrdersDetail("+obj.result.list[i].id+",'orders_detail.html',);\" title=\"查看明细\" src=\"../../images/bt_detail.gif\" class=\"op_button\" /></td></tr>";
+            }
+            str+="<tr><th colspan=\"100\" class=\"pager\"><div class=\"pager\">\n" +
+                "共"+obj.result.count+"条记录 每页<input value='"+obj.result.pageSize+"' size=\"2\" id='size'/>条" +
+                "第<input value='"+obj.result.pageNo+"' size=\"2\"/>页/共"+obj.result.pageCount+"页" +
+                "<a href='javascript:findByPageNo(1);'>第一页</a>" +
+                "<a href='javascript:findByPageNo("+(obj.result.pageNo-1)+");'>上一页</a>" +
+                "<a href='javascript:findByPageNo("+(obj.result.pageNo+1)+");'>下一页</a>" +
+                "<a href='javascript:findByPageNo("+(obj.result.pageCount)+");'>最后一页</a>" +
+                "转到<input value='"+obj.result.pageNo+"' size=\"2\" id='targetPage'/>页\n" +
+                "<button width=\"20\" onclick=\"changePage();\">GO</button>\n" +
+                "</div></th></tr></table>";
+            $("#info").html(str);
+        }
+    </script>
+</head>
+<body>
+
+<div class="page_title">客户信息管理 > 客户信息 > 历史订单 </div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>  
+	<button class="common_button" onclick="back();">返回</button>  
+</div>
+<table class="query_form_table">
+	<tr>
+		<th>客户编号</th>
+		<td id="no">KH071202001</td>
+		<th>客户名称</th>
+		<td id="name">聪海信息科技有限公司</td>
+	</tr>
+	</table>
+<br />
+<div id="info"></div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-Equiv="Cache-Control" Content="no-cache"/>
+    <meta http-Equiv="Pragma" Content="no-cache"/>
+    <meta http-Equiv="Expires" Content="0"/>
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+        }
+
+        header {
+            height: 85px;
+            border-bottom: solid 1px #666;
+        }
+
+        section {
+            height: calc(100% - 127px);
+        }
+
+        footer {
+            height: 28px;
+            padding: 6px;
+            font-size: 12px;
+            color: darkblue;
+            border-top: solid 1px #666;
+        }
+
+        #rightFrame {
+            background-color: white;
+            vertical-align: top;
+            height: calc(100% - 127px);
+            width: calc(100% - 165px);
+            position: absolute;
+            top: 86px;
+            left: 160px;
+        }
+
+        #left {
+            width: 160px;
+            height: 100%;
+            display: inline-block;
+            font-size: 14px;
+            color: white;
+            background-color: #0066CC;
+        }
+
+        .ul1 {
+            margin: 10px;
+            list-style-type: none;
+        }
+
+        .ul2 {
+            margin-left: 15px;
+            list-style-type: none;
+        }
+
+        .ul2 > li > a {
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+
+        .ul2 > li > a > div {
+            margin-top: 6px;
+            float: left;
+            width: 8px;
+            height: 8px;
+            background-color: #00B1ED;
+        }
+
+        .selected {
+            font-weight: bold;
+        }
+
+    </style>
+    <base target="rightFrame"/>
+    <script src="script/jquery-1.8.3.js"></script>
+    <script>
+        $(function () {
+            $("header").load("top.html");
+            $("footer").load("footer.html");
+            $(".ul2 li a").mouseenter(function () {
+                $(this).addClass("selected");
+                $(this).find("div").css("background", "#FF4C12");
+            }).mouseleave(function () {
+                if ($(this).find("div").attr("class") !== "selected") {
+                    $(this).removeClass("selected");
+                    $(this).find("div").css("background", "#00B1ED");
+                }
+            }).click(function () {
+                $(".ul2 li a").removeClass("selected");
+                $(".ul2 li a div").css("background", "#00B1ED").removeClass("selected");
+                $(this).addClass("selected");
+                $(this).find("div").css("background", "#FF4C12").addClass("selected");
+            });
+        });
+    </script>
+</head>
+<body style="padding: 0">
+<!--页面顶部-->
+<header>
+</header>
+<!--页面中部-->
+<section>
+    <div id="left">
+        <ul class="ul1">
+            <li>
+                <div>营销管理</div>
+                <ul class="ul2">
+                    <li><a href="~sale/list.html">
+                        <div></div>&nbsp;&nbsp;销售机会管理</a></li>
+                    <li><a href="~sale/dev.html">
+                        <div></div>&nbsp;&nbsp;客户开发计划</a></li>
+                </ul>
+            </li>
+            <li>
+                <div>客户管理</div>
+                <ul class="ul2">
+                    <li><a href="~cust/cust/list.html">
+                        <div></div>&nbsp;&nbsp;客户信息管理</a></li>
+                    <li><a href="~cust/lost/list.html">
+                        <div></div>&nbsp;&nbsp;客户流失管理</a></li>
+                </ul>
+            </li>
+            <li>
+                <div>服务管理</div>
+                <ul class="ul2">
+                    <li><a href="~cust/service/add.html">
+                        <div></div>&nbsp;&nbsp;服务创建</a></li>
+                    <li><a href="~cust/service/dispatch.html">
+                        <div></div>&nbsp;&nbsp;服务分配</a></li>
+                    <li><a href="~cust/service/deal.html">
+                        <div></div>&nbsp;&nbsp;服务处理</a></li>
+                    <li><a href="~cust/service/feedback.html">
+                        <div></div>&nbsp;&nbsp;服务反馈</a></li>
+                    <li><a href="~cust/service/arch.html">
+                        <div></div>&nbsp;&nbsp;服务归档</a></li>
+                </ul>
+            </li>
+            <li>
+                <div>统计报表</div>
+                <ul class="ul2">
+                    <li><a href="~rept/contr.html">
+                        <div></div>&nbsp;&nbsp;客户贡献分析</a></li>
+                    <li><a href="~rept/cons.html">
+                        <div></div>&nbsp;&nbsp;客户构成分析</a></li>
+                    <li><a href="~rept/ser.html">
+                        <div></div>&nbsp;&nbsp;客户服务分析</a></li>
+                    <li><a href="~rept/lost.html">
+                        <div></div>&nbsp;&nbsp;客户流失分析</a></li>
+                </ul>
+            </li>
+            <li>
+                <div>基础数据</div>
+                <ul class="ul2">
+                    <li><a href="~basd/dict.html">
+                        <div></div>&nbsp;&nbsp;数据字典管理</a></li>
+                    <li><a href="~basd/product.html">
+                        <div></div>&nbsp;&nbsp;查询产品信息</a></li>
+                    <li><a href="~basd/storage.html">
+                        <div></div>&nbsp;&nbsp;查询库存</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <iframe id="rightFrame" name="rightFrame" src="mywork.htm" frameborder="0" marginheight="0"
+            marginwidth="0"></iframe>
+</section>
+<!--页面底部-->
+<footer>
+</footer>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../css/style.css" rel="stylesheet" type="text/css">
+<script src="../script/common.js"></script>
+	<script type="text/javascript" src="../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+        $(function(){
+            $.ajax({
+                url:"../../cust/getAllLost",
+                type:"get",
+                contentType:"application/json;charset=utf-8",
+                success:function(obj){
+                    findByParams(obj);
+                }
+            });
+        });
+        function changePage() {
+            var targetPage=$("#targetPage").val();
+            findByPageNo(targetPage);
+        }
+        function findByPageNo(pageNo){
+            var pageSize=$("#size").val();
+            var data="pageNo="+pageNo+"&pageSize="+pageSize+"";
+            var cust_name= $("#cust_name").val();
+            if(cust_name!==""){
+                data+="&cust_name="+cust_name;
+            }
+            var manager_name=$("#manager_name").val();
+            if(manager_name!==""){
+                data+="&manager_name="+manager_name;
+            }
+            alert(data);
+            $.ajax({
+                url:"../../../cust/getAllLost?"+data,
+                type:"get",
+                //contentType:"application/json;charset=utf-8",
+                success:function (obj) {
+                    findByParams(obj);
+                }
+            });
+        }
+        function findByParams(obj){
+            var str="<table class=\"data_list_table\"><tr><th height=\"28\">编号</th>\n" +
+                "<th height=\"28\">年份</th><th height=\"28\">客户</th>\n" +
+                "<th height=\"28\">客户经理</th><th height=\"28\">流失原因</th></tr>";
+            if(obj.code==0){
+                $.each(obj.result.list,function(index,i){
+                    str+="<tr><td class=\"list_data_number\">"+i.id+"</td>" +
+                        "<td class=\"list_data_text\" height=\"27\">"+formatTime(i.lost_date,1)+"</td>" +
+                        "<td class=\"list_data_text\" height=\"27\">"+i.cust_name+"</td>" +
+                        "<td class=\"list_data_text\" height=\"27\">"+i.manager_name+"</td>" +
+                        "<td class=\"list_data_ltext\" height=\"27\">"+i.reason+"</td></tr>";
+                });
+                str+="<tr><th colspan=\"7\" class=\"pager\">" +
+                    "<div class=\"pager\">共"+obj.result.count+"条记录 每页<input value='"+obj.result.pageSize+"' size=\"2\" id='size'/>条" +
+                    "第<input  value='"+obj.result.pageNo+"' size=\"2\"/>页/共"+obj.result.pageCount+"页" +
+                    "<a href='javascript:findByPageNo(1);'>第一页</a>" +
+                    "<a href='javascript:findByPageNo("+(obj.result.pageNo-1)+");'>上一页</a>" +
+                    "<a href='javascript:findByPageNo("+(obj.result.pageNo+1)+");'>下一页</a>" +
+                    "<a href='javascript:findByPageNo("+obj.result.pageCount+");'>最后一页</a>" +
+                    "转到<input id='targetPage' value='"+obj.result.pageNo+"' size=\"2\"/>页" +
+                    "<button width=\"20\" onclick='changePage();'>GO</button>" +
+                    "</div></th></tr></table>";
+                $("#info").html(str);
+            }else{
+                alert("没有客户流失信息！");
+            }
+        }
+	</script>
+</head>
+<body>
+
+<div class="page_title">客户流失分析</div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>
+	<button class="common_button" onclick="findByPageNo(1);">查询</button>
+	</div>
+	<table class="query_form_table" border="0" cellPadding="3" cellSpacing="0">
+			<tr>
+					<th>客户名称</th>
+	<td><input id="cust_name" type="text" name="item.lstCustName" value=""></td>
+					<th>客户经理</th>
+
+	<td><input id="manager_name" type="text" name="item.lstCustManagerName" value=""></td>
+					
+			</tr>
+		</table><br />
+<div id="info"></div>
+</body>
+</html>

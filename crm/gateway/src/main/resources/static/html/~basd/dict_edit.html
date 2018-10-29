@@ -1,0 +1,85 @@
+<!DOCTYPE HTML >
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../css/style.css" rel="stylesheet" type="text/css">
+<script src="../script/common.js"></script>
+	<script type="text/javascript" src="../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+		var id=localStorage.getItem("id");
+		$.ajax({
+			url:"../../basd/findById?id="+id,
+			type:"get",
+			success:function(obj){
+				if(obj.code==0){
+				    $("#id").html(obj.result.id);
+                    $("#type").val(obj.result.type);
+                    $("#item").val(obj.result.item);
+                    $("#value").val(obj.result.value);
+                    if(obj.result.editable==1){
+                    	$("#editable").html("<input type=\"checkbox\" checked/>");
+					}else{
+                        $("#editable").html("<input type=\"checkbox\"/>");
+					}
+				}
+			}
+		});
+		function saveDict(){
+            var type=$("#type").val();
+            var item=$("#item").val();
+            var value=$("#value").val();
+            var flag=$("input[type='checkbox']").is(':checked')
+            var editable=0;
+            if(flag==true){
+                editable=1;
+			}
+			var data="{\"type\":\""+type+"\",\"item\":\""+item+"\"," +
+				"\"value\":\""+value+"\",\"editable\":\""+editable+"\",\"id\":\""+id+"\"}";
+            $.ajax({
+				url:"../../basd/updateDict",
+				type:"put",
+				data:data,
+				dataType:"json",
+				contentType:"application/json;charset=utf-8",
+				success:function (obj) {
+					if(obj.code==0){
+					    save("dict.html");
+					}else{
+					    alert("保存失败!");
+					}
+                }
+			});
+		}
+	</script>
+</head>
+<body>
+
+<div class="page_title">数据字典管理 > 编辑数据字典条目</div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>
+	<button class="common_button" onclick="back();">返回</button>
+	<button class="common_button" onclick="saveDict();">保存</button>
+</div>
+<table class="query_form_table">
+	<tr>
+		<th>编号</th>
+		<td id="id">9</td>
+		<th>类别</th>
+		<td><input id="type" value="" /><span class="red_star">*</span><br />（需要使用Ajax实现自动补全功能）</td>
+	</tr>
+	<tr>
+		<th>条目</th>
+		<td><input id="item" value="" /><span class="red_star">*</span></td>
+		<th>值</th>
+		<td><input id="value" value="" /><span class="red_star">*</span></td>
+	</tr>	
+	<tr>
+		<th>是否可编辑</th>
+		<td id="editable"></td>
+		<th>&nbsp;</th>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+</body>
+</html>

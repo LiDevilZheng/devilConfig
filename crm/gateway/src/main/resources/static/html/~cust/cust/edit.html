@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../../css/style.css" rel="stylesheet" type="text/css">
+<script src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.8.3.js"></script>
+    <script type="text/javascript">
+        var id=localStorage.getItem("id");
+        $(function(){
+            $.ajax({
+               url:"../../../cust/findByCustomerId?id="+id,
+               type:"get",
+               success:function(obj){
+                   var b="<button class=\"common_button\" onclick=\"help('');\">帮助</button>" +
+                       "<button class=\"common_button\" onclick=\"toLinkMan('"+obj.no+"','linkman.html','"+obj.name+"');\">联系人</button>" +
+                       "<button class=\"common_button\" onclick=\"toUrl("+id+",'activities.html');\">交往记录</button>" +
+                       "<button class=\"common_button\" onclick=\"toUrl("+id+",'orders.html');\">历史订单</button>" +
+                       "<button class=\"common_button\" onclick=\"back();\">返回</button>" +
+                       "<button class=\"common_button\" onclick=\"saveCustomer();\">保存</button>";
+                   $("#btn").html(b);
+                   var str="<table class=\"query_form_table\"><tr><th>客户编号</th><td>"+obj.no+"</td><th>名称</th>" +
+                       "<td><input id='name' value='"+obj.name+"'/><span class=\"red_star\">*</span></td></tr><tr>" +
+                       "<th>地区</th><td><select id='option3'>";
+                        $.ajax({
+                            url:"../../../basd/getAllItem?type=3",
+                            type:"get",
+                            success:function(obj1){
+                                var str1="<option>请选择...</option>";
+                                for(var i=0;i<obj1.length;i++){
+                                    str1+="<option value='"+obj1[i].value+"' ";
+                                    if(obj.regin==obj1[i].item){
+                                        str1+="selected";
+                                    }
+                                    str1+=">"+obj1[i].item+"</option>";
+                                }
+                                $("#option3").html(str1);
+                            }
+                        });
+                       str+="</select><span class=\"red_star\">*</span></td><th>客户经理</th><td><select id='option2'>";
+                        $.ajax({
+                            url:"../../../api/accountManager",
+                            type:"get",
+                            success:function(obj2){
+                                var str1="<option>请选择...</option>";
+                                for(var i=0;i<obj2.length;i++){
+                                    str1+="<option value='"+obj2[i].id+"'";
+                                    if(obj.manager_id==obj2[i].id){
+                                        str1+="selected";
+                                    }
+                                    str1+=">"+obj2[i].name+"</option>";
+                                }
+                                $("#option2").html(str1);
+                            }
+                       });
+                       str+="</select><span class=\"red_star\">*</span></td>" +
+                       "</tr><tr><th>客户等级</th><td><select id='option1'>";
+                        $.ajax({
+                            url:"../../../basd/getAllItem?type=1",
+                            type:"get",
+                            success:function(obj3){
+                                var str1="<option>请选择...</option>";
+                                for(var i=0;i<obj3.length;i++){
+                                    str1+="<option value='"+obj3[i].value+"' ";
+                                    if(obj.level==obj3[i].value){
+                                        str1+="selected";
+                                    }
+                                    str1+=">"+obj3[i].item+"</option>";
+                                }
+                                $("#option1").html(str1);
+                            }
+                        });
+                       str+="</select><span class=\"red_star\">*</span>" +
+                       "</td><th></th><td></td></tr><tr><th>客户满意度</th><td>" +
+                       "<select id='satisfy'><option value=\"\">未指定</option><option value=\"5\">☆☆☆☆☆</option>" +
+                       "<option value=\"4\">☆☆☆☆</option><option value=\"3\" selected=\"selected\">☆☆☆</option>" +
+                       "<option value=\"2\">☆☆</option><option value=\"1\">☆</option></select><span class=\"red_star\">*</span></td>" +
+                       "<th>客户信用度</th><td><select id='credit'><option value=\"\">未指定</option>\n" +
+                       "<option value=\"5\">☆☆☆☆☆</option><option value=\"4\">☆☆☆☆</option>" +
+                       "<option value=\"3\" selected=\"selected\">☆☆☆</option><option value=\"2\">☆☆</option>" +
+                       "<option value=\"1\">☆</option></select><span class=\"red_star\">*</span></td></tr></table>";
+                   $("#info").html(str);
+                   var str2="<table class=\"query_form_table\" id=\"table1\"><tr><th>地址</th><td>" +
+                       "<input id='addr' value='"+obj.addr+"'/><span class=\"red_star\">*</span></td>" +
+                       "<th>邮政编码</th><td><input id='zip' value='"+obj.zip+"' name=\"T1\" size=\"20\" /><span class=\"red_star\">*</span></td></tr>" +
+                       "<tr><th>电话</th><td><input id='tel' value='"+obj.tel+"' name=\"T4\" size=\"20\"  /><span class=\"red_star\">*</span></td>" +
+                       "<th>传真</th><td><input id='fax' value='"+obj.fax+"' name=\"T5\" size=\"20\"  /><span class=\"red_star\">*</span></td>" +
+                       "</tr><tr><th>网址</th><td><input id='website' value='"+obj.website+"' name=\"T6\" size=\"20\"  />" +
+                       "<span class=\"red_star\">*</span></td><th>　</th><td></td></tr></table>";
+                   $("#info2").html(str2);
+                   var str3="<table class=\"query_form_table\" id=\"table2\"><tr><th>营业执照注册号</th>" +
+                       "<td><input id='licence' value='"+obj.licence+"' name=\"T13\" size=\"20\" /></td><th>法人</th>" +
+                       "<td><input id='chieftain' value='"+obj.chieftain+"' name=\"T3\" size=\"20\" /><span class=\"red_star\">*</span></td></tr>" +
+                       "<tr><th>注册资金（万元）</th><td><input id='bankroll' value='"+obj.bankroll+"' name=\"T7\" size=\"20\" /> </td>" +
+                       "<th>年营业额</th><td><input id='turnover' value='"+obj.turnover+"' name=\"T8\" size=\"20\" /></td></tr>" +
+                       "<tr><th>开户银行</th><td><input id='bank' value='"+obj.bank+"' name=\"T9\" size=\"20\" />" +
+                       "<span class=\"red_star\">*</span></td><th>银行帐号</th><td>\n" +
+                       "<input id='account' value='"+obj.account+"' name=\"T10\" size=\"20\" /><span class=\"red_star\">*</span></td>" +
+                       "</tr><tr><th>地税登记号</th><td><input id='tax' value='"+obj.tax+"' name=\"T11\" size=\"20\" /></td><th>国税登记号</th>" +
+                       "<td><input id='national' value='"+obj.national+"' name=\"T12\" size=\"20\" /></td></tr></table>";
+                   $("#info3").html(str3);
+               }
+            });
+        });
+        function saveCustomer(){
+            //var id=localStorage.getItem("id");
+            var name=$("#name").val();
+            var regin=$("#option3").find("option:selected").text();
+            var manager_id=$("#option2").val();
+            var manager_name=$("#option2").find("option:selected").text();
+            var level=$("#option1").val();
+            var level_label=$("#option1").find("option:selected").text();
+            var satisfy=$("#satisfy").val();
+            var credit=$("#credit").val();
+            var addr=$("#addr").val();
+            var zip=$("#zip").val();
+            var tel=$("#tel").val();
+            var fax=$("#fax").val();
+            var website=$("#website").val();
+            var licence=$("#licence").val();
+            var chieftain=$("#chieftain").val();
+            var bankroll=$("#bankroll").val();
+            var turnover=$("#turnover").val();
+            var bank=$("#bank").val();
+            var account=$("#account").val();
+            var tax=$("#tax").val();
+            var national=$("#national").val();
+            var data="{\"id\":\""+id+"\",\"name\":\""+name+"\",\"regin\":\""+regin+"\",\"manager_id\":\""+manager_id+"\",\"manager_name\":\""+manager_name+"\"," +
+                "\"level\":\""+level+"\",\"level_label\":\""+level_label+"\",\"satisfy\":\""+satisfy+"\",\"credit\":\""+credit+"\",\"addr\":\""+addr+"\"," +
+                "\"zip\":\""+zip+"\",\"tel\":\""+tel+"\",\"fax\":\""+fax+"\",\"website\":\""+website+"\",\"licence\":\""+licence+"\",\"chieftain\":\""+chieftain+"\"," +
+                "\"bankroll\":\""+bankroll+"\",\"turnover\":\""+turnover+"\",\"bank\":\""+bank+"\",\"account\":\""+account+"\",\"tax\":\""+tax+"\",\"national\":\""+national+"\"}";
+            //alert(data);
+            $.ajax({
+               url:"../../../cust/updateCustomer",
+               type:"put",
+               data:data,
+               dataType:"json",
+               contentType:"application/json;charset=utf-8",
+               success:function(obj){
+                   if(obj.code==0){
+                       save("list.html");
+                   }else{
+                       alert("修改失败！");
+                   }
+               }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<div class="page_title">客户信息管理 > 客户信息</div>
+<div id="btn" class="button_bar">
+</div>
+<div id="info"></div>
+<br />
+<div id="info2"></div>
+<br />
+<div id="info3"></div>
+<p>　</p>
+</body>
+</html>

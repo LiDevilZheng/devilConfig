@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../../css/style.css" rel="stylesheet" type="text/css">
+<script src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+        $(function(){
+            $("#addLinkMan").click(function(){
+                var cust_no=localStorage.getItem("no");
+                var cust_name=localStorage.getItem("custName");
+                var name=$("#name").val();
+                var sex=$("input[name='gander']:checked").val();
+                var postion=$("#postion").val();
+                var tel=$("#tel").val();
+                var mobile=$("#mobile").val();
+                var memo=$("#memo").val();
+                var data="{\"cust_no\":\""+cust_no+"\",\"cust_name\":\""+cust_name+"\",\"name\":\""+name+"\",\"sex\":\""+sex+"\"," +
+                    "\"postion\":\""+postion+"\",\"tel\":\""+tel+"\",\"mobile\":\""+mobile+"\",\"memo\":\""+memo+"\"}";
+                //alert(data);
+                $.ajax({
+                   url:"../../../cust/addLinkMan",
+                   type:"post",
+                   data:data,
+                   dataType:"json",
+                   contentType:"application/json;charset=utf-8",
+                   success:function(obj){
+                       if(obj.code==0){
+                           add("linkman.html");
+                       }else{
+                           alert("添加失败!");
+                       }
+                   }
+                });
+            });
+        });
+        function checkPos(){
+            var postion=$("#postion").val();
+            if(postion==""){
+                $("#pos").html("职位不能为空!");
+            }else{
+                $("#pos").html("可以使用!").css("color","blue");
+            }
+        }
+        function checkName(){
+            var name=$("#name").val();
+            if(name==""){
+                $("#nameText").html("姓名不能为空!");
+            }else{
+                $("#nameText").html("可以使用").css({"color":"blue"});
+            }
+        }
+	</script>
+</head>
+<body>
+
+<div class="page_title">客户信息管理 > 客户信息 > 联系人 > 新建联系人</div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>
+	<button class="common_button" onclick="back();">返回</button>
+	<button class="common_button" id="addLinkMan" >保存</button>
+</div>
+<table class="query_form_table">
+	<tr>
+		<th>姓名</th>
+		<td><input id="name" onblur="checkName()"/><span id="nameText" class="red_star">*</span></td>
+		<th>性别</th>
+		<td>
+			<input type="radio" name="gander" value="男" checked />男
+			<input type="radio" name="gander" value="女" />女
+		</td>
+	</tr>
+	<tr>
+		<th>职位</th>
+		<td><input id="postion" onblur="checkPos();"/><span id="pos" class="red_star">*</span></td>
+		<th>办公电话</th>
+		<td><input id="tel"/><span class="red_star">*</span></td>
+	</tr>	
+	<tr>
+		<th>手机</th>
+		<td><input id="mobile" name="T1" size="20" /></td>
+		<th>备注</th>
+		<td><input id="memo" name="T2" size="20" /></td>
+	</tr>
+</table>
+</body>
+</html>

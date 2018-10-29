@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>jb-aptech毕业设计项目</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../css/style.css" rel="stylesheet" type="text/css">
+<script src="../script/common.js"></script>
+	<script type="text/javascript" src="../script/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+        $(function() {
+                var id = localStorage.getItem("id");
+               	$.ajax({
+                    url:"../../sale/findByChanceId?id="+id,
+                    type:"get",
+                    contentType:"application/json;charset=utf-8",
+                    success:function(obj){
+                        var str="<table class='query_form_table'><tr><th>编号</th><td>"+obj.result.id+"</td>" +
+                            "<th>机会来源</th><td>"+obj.result.source+"</td></tr><tr><th>客户名称</th>" +
+                            "<td>"+obj.result.cust_name+"</td><th>成功机率（%）</th><td>"+obj.result.rate+"</td></tr><tr><th>概要</th>" +
+                            "<td colspan='3'>"+obj.result.title+"</td></tr><tr><th>联系人</th><td>"+obj.result.linkman+"</td>" +
+                            "<th>联系人电话</th><td>"+obj.result.tel+"</td></tr><tr><th>机会描述</th>" +
+                            "<td colspan='3'>"+obj.result.desc+"</td></tr><tr><th>创建人</th><td>"+obj.result.create_by+
+							"</td><th>创建时间</th><td>"+formatTime(obj.result.create_date)+"</td></tr><tr><th>指派给</th>" +
+							"<td>"+obj.result.due_to+"</td><th>指派时间</th><td>"+formatTime(obj.result.due_date,2)+"</td></tr></table>";
+                        $("#info").html(str);
+                    }
+				});
+
+				$.ajax({
+					url:"../../sale/findAllPlan?chc_id="+id,
+					type:"get",
+					success:function(obj){
+						var str="<table class=\"data_list_table\" id=\"table1\"><tr>" +
+							"<th>日期</th><th>计划</th><th>执行效果</th></tr>";
+						for(var i=0;i<obj.length;i++){
+							str+="<tr><td class='list_data_text'>"+formatTime(obj[i].date,2)+"</td><td class='list_data_ltext'>"+
+								obj[i].todo+"<td class='list_data_ltext'><input id='res' name='T1' size='20'/>"+
+								"<button class='common_button' onclick='savePlanResult("+obj[i].id+");'>保存</button></td></tr>";
+						}
+						str+="</table>";
+						$("#info2").html(str);
+					}
+				});
+            });
+        function savePlanResult(id){
+            var result=$("#res").val();
+            var data="{\"id\":\""+id+"\",\"result\":\""+result+"\"}";
+            $.ajax({
+				url:"../../sale/updatePlanResult",
+				type:"put",
+				data:data,
+                dataType:"json",
+                contentType:"application/json;charset=utf-8",
+				success:function(obj){
+				    if(obj.code==0){
+				        alert("执行效果保存成功！");
+				        to("dev_execute.html");
+					}else{
+				        alert("添加失败！");
+					}
+				}
+			});
+		}
+		function endDev(){
+            var id = localStorage.getItem("id");
+            $.ajax({
+				url:"../../sale/updateStatus?id="+id,
+				type:"get",
+				success:function(obj){
+                    if(obj.code==0){
+                        alert('开发失败，已归档。');
+                        to("dev.html");
+                    }else{
+                        alert("终止失败！");
+                    }
+				}
+			});
+		}
+        function devSuccess(){
+            var id = localStorage.getItem("id");
+            $.ajax({
+                url:"../../sale/updateStatus?id="+id,
+                type:"get",
+                success:function(obj){
+                    if(obj.code==0){
+                        alert('用户开发成功，已添加新客户记录。');
+                        to("dev.html");
+                    }else{
+                        alert("开发失败！");
+                    }
+                }
+            });
+        }
+	</script>
+</head>
+<body>
+<div class="page_title">客户开发计划 &gt; 执行计划</div>
+<div class="button_bar">
+	<button class="common_button" onclick="help('');">帮助</button>
+	<button class="common_button" onclick="endDev();">终止开发</button>
+	<button class="common_button" onclick="back();">返回</button>
+	<button class="common_button" onclick="to('dev_plan.html');">制定计划</button>
+	<button class="common_button" onclick="devSuccess();">开发成功</button>
+	</div>
+<div id="info"></div>
+<br />
+<div id="info2"></div>
+</body>
+</html>

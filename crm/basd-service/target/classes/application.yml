@@ -1,0 +1,27 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.20.0.18:8761/eureka/
+server:
+  port: 8011
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.20.0.10:3306/crm?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: 123
+  application:
+    name: basd-service
+  redis:
+    host: 172.20.0.11
+    port: 6379
+    pool:
+      max-active: 10 #最大连接数
+management:
+  security:
+    enabled: false #关闭安全验证，否则访问refresh端点时会提示权限不足
+logging:
+  level:
+    com:
+      devil:
+        mapper: debug

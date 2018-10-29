@@ -1,0 +1,26 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: gateway
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.20.0.18:8761/eureka/
+zuul:
+  routes:
+    user-service:
+      path: /api/**
+      serviceId: user-service
+    sale-service:
+      path: /sale/**
+      serviceId: sale-service
+    cust-service:
+      path: /cust/**
+      serviceId: cust-service
+    basd-service:
+      path: /basd/**
+      serviceId: basd-service
+    rept-service:
+      path: /rept/**
+      serviceId: rept-service
